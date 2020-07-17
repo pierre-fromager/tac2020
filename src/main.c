@@ -33,14 +33,11 @@
 pthread_attr_t th1_attr, th2_attr;
 pthread_t th1, th2;
 
-pthread_mutex_t tmx1, tmx2 = PTHREAD_MUTEX_INITIALIZER;
+pthread_mutex_t tmx1, tmx2, dsatck_mutex, counterMutex = PTHREAD_MUTEX_INITIALIZER;
 pthread_cond_t tic1, tic2 = PTHREAD_COND_INITIALIZER;
 
-pthread_mutex_t counterMutex = PTHREAD_MUTEX_INITIALIZER;
 volatile unsigned int line_counter = 0;
 volatile unsigned int data_counter = 0;
-
-pthread_mutex_t dsatck_mutex = PTHREAD_MUTEX_INITIALIZER;
 
 DStack s;
 
