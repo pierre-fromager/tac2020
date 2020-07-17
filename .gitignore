@@ -1,0 +1,4 @@
+src/*.o
+/.vscode/
+tac
+doc/html
