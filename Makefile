@@ -1,6 +1,6 @@
 CXX = gcc
 CC = $(CXX)
-CFLAGS = -Wall -Wextra -std=c99 -lpthread -lm -g
+CFLAGS = -Wall -Wextra -std=c11 -lpthread -lm -g
 SRC = $(wildcard src/*.c) $(wildcard src/**/*.c)
 OBJECTS=$(SRC:%.c=%.o)
 TARGET=tac
