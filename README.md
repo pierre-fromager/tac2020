@@ -33,9 +33,10 @@ Main program illustrates this usage with a simple producer/consumer pattern shar
 
 a task :
 
-* is thread. 
+* is threaded. 
 * has name. 
-* has priority. 
+* has a sched policy. 
+* has a sched priority. 
 * has its own stack with a given size. 
 * has cpu core assigned. 
 * can be regulated in term of time consuming by frequency without burning cpu time. 
