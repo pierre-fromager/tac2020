@@ -9,7 +9,7 @@ Main program illustrates this usage with a simple producer/consumer pattern shar
 
 * Freelance interested in high and low level langages. 
 * Involved into IoT projects on embeded systems (atmel, xtensa, arm... ) and others MCUs for data acquisition and modules control where synchronized threads are not optionals. 
-* RTOS curious and FreeRTOS user.
+* RTOS curious, FreeRTOS user.
 
 ## Project
 
@@ -96,6 +96,14 @@ SCHED_DEADLINE min/max priority	: 0/0
 Lowest is the value highest is the priority.
 
 ## Debug
+
+### Profiling
+
+``` bash
+make profile
+```
+This use valgrind to generate the callgrind.* files.  
+Use QCachegring to check whatever.  
 
 ### Gdb
 
