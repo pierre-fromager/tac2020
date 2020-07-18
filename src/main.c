@@ -13,12 +13,16 @@
 #include "logger.h"
 #include "tac.h"
 #include "dstack.h"
+
 #include "locale.h"
+#include "assert.h"
+#include "signal.h"
 
 #define LOCALE_FR_UTF8 "fr_FR.utf8"
 #define TZ_PARIS "Europe/Paris"
 #define COMMON_FMT "%05d,%s,%05d,%16lu,%d,%s,%d\n"
 #define HEADER_FMT "Start %s core %d freq %05d ms ssize %d prio %d\n"
+#define HEADER_DSTACK_FMT "%s dstack size %s pop : %d\n"
 
 #define T1_SSIZE 0x4096
 #define T1_NAME "producer"
@@ -31,10 +35,10 @@
 #define T2_FQ (T1_FQ * 10)
 
 pthread_attr_t th1_attr, th2_attr;
-pthread_t th1, th2;
+pthread_t th1, th2, thhb;
 
-pthread_mutex_t tmx1, tmx2, dsatck_mutex, counterMutex = PTHREAD_MUTEX_INITIALIZER;
-pthread_cond_t tic1, tic2 = PTHREAD_COND_INITIALIZER;
+pthread_mutex_t tmx1, tmx2, dsatck_mutex, counterMutex, exitMutex = PTHREAD_MUTEX_INITIALIZER;
+pthread_cond_t tic1, tic2, exit_cond = PTHREAD_COND_INITIALIZER;
 
 volatile unsigned int line_counter = 0;
 volatile unsigned int data_counter = 0;
@@ -43,12 +47,25 @@ DStack s;
 
 void init();
 void create_threads();
+void sigint_handler();
 void *t1(void *arg);
 void *t2(void *arg);
+void *hb();
 void tcommon(struct targs *ta);
 void tdebug(const char *taskname, unsigned int run);
 void theader(char *name, int coren, int freq, int ssize, unsigned int prio);
 void cycle();
+
+int main(void)
+{
+  assert(sysconf(_SC_CLK_TCK) == 100);
+  init();
+  dstk_init(&s);
+  signal(SIGINT, sigint_handler);
+  create_threads();
+  log_info("Exit main\n");
+  return 0;
+}
 
 void init()
 {
@@ -60,12 +77,9 @@ void init()
   srand(time(NULL));
 }
 
-int main(void)
+void sigint_handler()
 {
-  init();
-  dstk_init(&s);
-  create_threads();
-  return 0;
+  pthread_cond_signal(&exit_cond);
 }
 
 void create_threads()
@@ -111,9 +125,20 @@ void create_threads()
   log_e(err, "thread th1 not created");
   err = pthread_create(&th2, &th2_attr, t2, (void *)t2_args);
   log_e(err, "thread th2 not created");
-  pthread_exit(0);
+
+  err = pthread_create(&thhb, NULL, hb, NULL);
+  log_e(err, "thread heartbeat not created");
+  pthread_join(thhb, NULL);
+
+  log_info("Freeing args mallocs\n");
   free(t1_args);
   free(t2_args);
+}
+
+void *hb()
+{
+  pthread_cond_wait(&exit_cond, &exitMutex);
+  return NULL;
 }
 
 void *t1(void *ta)
@@ -148,13 +173,13 @@ void *t2(void *ta)
     pthread_mutex_lock(&dsatck_mutex);
     if (!dstk_isempty(&s))
     {
-      log_info("%s dstack size before pop : %d\n", parms->name, s.size);
+      log_info(HEADER_DSTACK_FMT, parms->name, "pre", s.size);
       while (!dstk_isempty(&s))
       {
         itm = dstk_pop(&s);
         log_info("dstack pop : %d\n", itm);
       }
-      log_info("%s dstack size after pop : %d\n", parms->name, s.size);
+      log_info(HEADER_DSTACK_FMT, parms->name, "post", s.size);
     }
     pthread_mutex_unlock(&dsatck_mutex);
     task_wait(parms->freq, tic2, tmx2);
