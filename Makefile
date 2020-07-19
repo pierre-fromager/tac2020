@@ -38,3 +38,4 @@ cleandoc:
 .PHONY: check
 check:
 	cppcheck --enable=all src/
+	

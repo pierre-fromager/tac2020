@@ -10,7 +10,7 @@
  * 
  */
 
-#define LOGGER_LOG_LEVEL LOG_INFO
+#define LOGGER_LOG_LEVEL LOG_DEBUG
 
 #include "logger.h"
 #include "tac.h"
@@ -133,7 +133,7 @@ void create_threads()
   log_e(err, "thread heartbeat not created");
   pthread_join(thhb, NULL);
 
-  log_debug("Freeing args mallocs\n");
+  log_debug("\nFreeing args mallocs\n");
   free(t1_args);
   free(t2_args);
 }
@@ -149,13 +149,16 @@ void *t1(void *ta)
   static unsigned int run = 0;
   struct targs *parms;
   parms = (struct targs *)ta;
+  Item item;
   tcommon(ta);
   for (;;)
   {
     tdebug(parms->name, ++run);
     pthread_mutex_lock(&dsatck_mutex);
     data_counter++;
-    dstk_push(&s, data_counter);
+    item.intval = data_counter;
+    strcpy(item.strval, (data_counter % 2 == 0) ? "even" : "odd");
+    dstk_push(&s, item);
     log_debug("%s dstack size : %d\n", parms->name, s.size);
     pthread_mutex_unlock(&dsatck_mutex);
     task_wait(parms->freq, tic1, tmx1);
@@ -180,7 +183,7 @@ void *t2(void *ta)
       while (!dstk_isempty(&s))
       {
         itm = dstk_pop(&s);
-        log_debug("dstack pop : %d\n", itm);
+        log_debug("dstack pop - intval : %u, strval : %s\n", itm.intval, itm.strval);
       }
       log_debug(HEADER_DSTACK_FMT, parms->name, "post", s.size);
     }

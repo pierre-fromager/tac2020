@@ -18,9 +18,11 @@ extern "C"
 #define DSTACK_INIT_SIZE 2
 #define DSTACK_INIT_TOP -1
 
-    //typedef char String50 { char x[DSTACK_INIT_SIZE]; } String50;
-    //typedef char Item[50];
-    typedef int Item;
+    typedef struct
+    {
+        unsigned int intval;
+        char strval[50];
+    } Item;
 
     typedef struct
     {

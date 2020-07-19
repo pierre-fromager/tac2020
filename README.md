@@ -43,10 +43,10 @@ a task :
 
 ## Todos
 
-* let dstack to use Item as char* or other. 
 * provide ellapse for real work payload task. 
 * trace potential memory leaks.
 * implement shared memory.
+* replace condition variables by signals.
 
 ## Pitfall
 
@@ -98,7 +98,7 @@ Lowest is the value highest is the priority.
 
 ### Check syntax
 
-Syntaxt checker cppcheck  
+Syntax checker with cppcheck  
 ``` bash
 make check
 ```
