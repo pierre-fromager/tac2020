@@ -96,6 +96,13 @@ Lowest is the value highest is the priority.
 
 ## Debug
 
+### Check syntax
+
+Syntaxt checker cppcheck  
+``` bash
+make check
+```
+
 ### Profiling
 
 ``` bash

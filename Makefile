@@ -2,8 +2,6 @@ CXX = gcc
 CC = $(CXX)
 CFLAGS = -Wall -Wextra -std=c11 -lpthread -lm -g
 SRC_FILES = $(wildcard src/*.c) $(wildcard src/**/*.c)
-OBJ_FILES=obj
-BUILDDIR=build
 OBJECTS=$(SRC_FILES:%.c=%.o)
 TARGET=tac
 
@@ -36,3 +34,7 @@ doc:
 .PHONY: cleandoc
 cleandoc:
 	rm -rf doc/html
+
+.PHONY: check
+check:
+	cppcheck --enable=all src/

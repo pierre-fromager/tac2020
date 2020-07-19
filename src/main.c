@@ -22,8 +22,8 @@
 
 #define LOCALE_FR_UTF8 "fr_FR.utf8"
 #define TZ_PARIS "Europe/Paris"
-#define COMMON_FMT "%05d,%s,%05d,%16lu,%d,%s,%d\n"
-#define HEADER_FMT "Start %s core %d freq %05d ms ssize %d prio %d\n"
+#define COMMON_FMT "%05u,%s,%05u,%16lu,%u,%s,%u\n"
+#define HEADER_FMT "Start %s core %d freq %05d ms ssize %d prio %u\n"
 #define HEADER_DSTACK_FMT "%s dstack size %s pop : %d\n"
 
 #define T1_SSIZE 0x4096
@@ -65,6 +65,7 @@ int main(void)
   dstk_init(&s);
   signal(SIGINT, sigint_handler);
   create_threads();
+  dstk_destroy(&s);
   log_debug("Exit main\n");
   return 0;
 }
