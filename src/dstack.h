@@ -8,8 +8,8 @@ extern "C"
 {
 #endif
 
-#ifndef DDStack_H
-#define DDStack_H
+#ifndef DSTACK_H
+#define DSTACK_H
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -40,7 +40,7 @@ extern "C"
     Item dstk_peek(DStack *DStack);
     Item dstk_pop(DStack *DStack);
 
-#endif // ifndef DDStack_H
+#endif // ifndef DSTACK_H
 
 #ifdef __cplusplus
 }

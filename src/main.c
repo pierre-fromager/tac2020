@@ -10,53 +10,25 @@
  * 
  */
 
-#define LOGGER_LOG_LEVEL LOG_DEBUG
-
-#include "logger.h"
-#include "tac.h"
-#include "dstack.h"
-
-#include "locale.h"
-#include "assert.h"
-#include "signal.h"
-
-#define LOCALE_FR_UTF8 "fr_FR.utf8"
-#define TZ_PARIS "Europe/Paris"
-#define COMMON_FMT "%05u,%s,%05u,%16lu,%u,%s,%u\n"
-#define HEADER_FMT "Start %s core %d freq %05d ms ssize %d prio %u\n"
-#define HEADER_DSTACK_FMT "%s dstack size %s pop : %d\n"
-
-#define T1_SSIZE 0x4096
-#define T1_NAME "producer"
-#define T1_PR 10
-#define T1_FQ 100
-
-#define T2_SSIZE 0x4096
-#define T2_NAME "consumer"
-#define T2_PR 40
-#define T2_FQ (T1_FQ * 10)
-
-pthread_attr_t th1_attr, th2_attr;
-pthread_t th1, th2, thhb;
-
-pthread_mutex_t tmx1, tmx2, dsatck_mutex, counterMutex, exitMutex = PTHREAD_MUTEX_INITIALIZER;
-pthread_cond_t tic1, tic2, exit_cond = PTHREAD_COND_INITIALIZER;
+#include "main_common.h"
 
 volatile unsigned int line_counter = 0;
 volatile unsigned int data_counter = 0;
 
-DStack s;
-
-void init();
 void create_threads();
 void sigint_handler();
 void *t1(void *arg);
 void *t2(void *arg);
 void *hb();
-void tcommon(struct targs *ta);
-void tdebug(const char *taskname, unsigned int run);
-void theader(char *name, int coren, int freq, int ssize, unsigned int prio);
 void cycle();
+
+pthread_attr_t th1_attr, th2_attr;
+pthread_t th1, th2, thhb;
+
+pthread_mutex_t tmx1, tmx2, dsatck_mutex, exit_mutex = PTHREAD_MUTEX_INITIALIZER;
+pthread_cond_t tic1, tic2, exit_cond = PTHREAD_COND_INITIALIZER;
+
+DStack s;
 
 int main(void)
 {
@@ -68,16 +40,6 @@ int main(void)
   dstk_destroy(&s);
   log_debug("Exit main\n");
   return 0;
-}
-
-void init()
-{
-  setlocale(LC_ALL, LOCALE_FR_UTF8);
-  setlocale(LC_NUMERIC, LOCALE_FR_UTF8);
-  setlocale(LC_TIME, LOCALE_FR_UTF8);
-  setenv(T_TZ, TZ_PARIS, 1);
-  tzset();
-  srand(time(NULL));
 }
 
 void sigint_handler()
@@ -140,7 +102,7 @@ void create_threads()
 
 void *hb()
 {
-  pthread_cond_wait(&exit_cond, &exitMutex);
+  pthread_cond_wait(&exit_cond, &exit_mutex);
   return NULL;
 }
 
@@ -153,7 +115,8 @@ void *t1(void *ta)
   tcommon(ta);
   for (;;)
   {
-    tdebug(parms->name, ++run);
+    cycle();
+    tdebug(parms->name, ++run, line_counter, data_counter);
     pthread_mutex_lock(&dsatck_mutex);
     data_counter++;
     item.intval = data_counter;
@@ -171,19 +134,20 @@ void *t2(void *ta)
   static unsigned int run = 0;
   struct targs *parms;
   parms = (struct targs *)ta;
-  Item itm;
+  Item item;
   tcommon(ta);
   for (;;)
   {
-    tdebug(parms->name, ++run);
+    cycle();
+    tdebug(parms->name, ++run, line_counter, data_counter);
     pthread_mutex_lock(&dsatck_mutex);
     if (!dstk_isempty(&s))
     {
       log_debug(HEADER_DSTACK_FMT, parms->name, "pre", s.size);
       while (!dstk_isempty(&s))
       {
-        itm = dstk_pop(&s);
-        log_debug("dstack pop - intval : %u, strval : %s\n", itm.intval, itm.strval);
+        item = dstk_pop(&s);
+        log_debug("dstack pop - intval : %u, strval : %s\n", item.intval, item.strval);
       }
       log_debug(HEADER_DSTACK_FMT, parms->name, "post", s.size);
     }
@@ -191,29 +155,6 @@ void *t2(void *ta)
     task_wait(parms->freq, tic2, tmx2);
   }
   return NULL;
-}
-
-void tcommon(struct targs *ta)
-{
-  struct targs *parms;
-  parms = (struct targs *)ta;
-  attach_core(parms->coren);
-  theader(parms->name, parms->coren, parms->freq, parms->ssize, parms->prio);
-}
-
-void tdebug(const char *taskname, unsigned int run)
-{
-  char dt[TIMESTAMP_SIZE];
-  pthread_t thid = pthread_self();
-  pid_t tid = syscall(SYS_gettid);
-  set_datetimems(dt);
-  cycle();
-  log_info(COMMON_FMT, line_counter, dt, run, thid, tid, taskname, data_counter);
-}
-
-void theader(char *name, int coren, int freq, int ssize, unsigned int prio)
-{
-  log_info(HEADER_FMT, name, coren, freq, ssize, prio);
 }
 
 void cycle()
