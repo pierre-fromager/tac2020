@@ -45,7 +45,6 @@ a task :
 
 * let dstack to use Item as char* or other. 
 * provide ellapse for real work payload task. 
-* set log level to logger.
 * trace potential memory leaks.
 * implement shared memory.
 

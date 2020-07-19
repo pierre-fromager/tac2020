@@ -10,6 +10,8 @@
  * 
  */
 
+#define LOGGER_LOG_LEVEL LOG_INFO
+
 #include "logger.h"
 #include "tac.h"
 #include "dstack.h"
@@ -63,7 +65,7 @@ int main(void)
   dstk_init(&s);
   signal(SIGINT, sigint_handler);
   create_threads();
-  log_info("Exit main\n");
+  log_debug("Exit main\n");
   return 0;
 }
 
@@ -130,7 +132,7 @@ void create_threads()
   log_e(err, "thread heartbeat not created");
   pthread_join(thhb, NULL);
 
-  log_info("Freeing args mallocs\n");
+  log_debug("Freeing args mallocs\n");
   free(t1_args);
   free(t2_args);
 }
@@ -153,7 +155,7 @@ void *t1(void *ta)
     pthread_mutex_lock(&dsatck_mutex);
     data_counter++;
     dstk_push(&s, data_counter);
-    log_info("%s dstack size : %d\n", parms->name, s.size);
+    log_debug("%s dstack size : %d\n", parms->name, s.size);
     pthread_mutex_unlock(&dsatck_mutex);
     task_wait(parms->freq, tic1, tmx1);
   }
@@ -173,13 +175,13 @@ void *t2(void *ta)
     pthread_mutex_lock(&dsatck_mutex);
     if (!dstk_isempty(&s))
     {
-      log_info(HEADER_DSTACK_FMT, parms->name, "pre", s.size);
+      log_debug(HEADER_DSTACK_FMT, parms->name, "pre", s.size);
       while (!dstk_isempty(&s))
       {
         itm = dstk_pop(&s);
-        log_info("dstack pop : %d\n", itm);
+        log_debug("dstack pop : %d\n", itm);
       }
-      log_info(HEADER_DSTACK_FMT, parms->name, "post", s.size);
+      log_debug(HEADER_DSTACK_FMT, parms->name, "post", s.size);
     }
     pthread_mutex_unlock(&dsatck_mutex);
     task_wait(parms->freq, tic2, tmx2);
@@ -202,19 +204,12 @@ void tdebug(const char *taskname, unsigned int run)
   pid_t tid = syscall(SYS_gettid);
   set_datetimems(dt);
   cycle();
-  if (strcmp(taskname, T1_NAME) == 0)
-  {
-    log_color(YEL, COMMON_FMT, line_counter, dt, run, thid, tid, taskname, data_counter);
-  }
-  else
-  {
-    log_color(CYN, COMMON_FMT, line_counter, dt, run, thid, tid, taskname, data_counter);
-  }
+  log_info(COMMON_FMT, line_counter, dt, run, thid, tid, taskname, data_counter);
 }
 
 void theader(char *name, int coren, int freq, int ssize, unsigned int prio)
 {
-  log_white(HEADER_FMT, name, coren, freq, ssize, prio);
+  log_info(HEADER_FMT, name, coren, freq, ssize, prio);
 }
 
 void cycle()

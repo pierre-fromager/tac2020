@@ -86,31 +86,30 @@ void show_th_attr(pthread_attr_t *attr)
   struct sched_param sp;
   err = pthread_attr_getdetachstate(attr, &i);
   log_e(err, "pthread_attr_getdetachstate");
-  log_color(MAG, "Detach state\t\t %s\n", _attr_detachstate(i));
+  log_debug("Detach state\t\t %s\n", _attr_detachstate(i));
   err = pthread_attr_getscope(attr, &i);
   log_e(err, "pthread_attr_getscope");
-  log_color(MAG, "Scope\t\t\t %s\n", _attr_scope(i));
+  log_debug("Scope\t\t\t %s\n", _attr_scope(i));
   err = pthread_attr_getinheritsched(attr, &i);
   log_e(err, "pthread_attr_getinheritsched");
-  log_color(MAG, "Inherit scheduler\t %s\n", _attr_inheritsched(i));
+  log_debug("Inherit scheduler\t %s\n", _attr_inheritsched(i));
   err = pthread_attr_getschedpolicy(attr, &sched_pol);
   log_e(err, "pthread_attr_getschedpolicy");
-  log_color(MAG, "Scheduling policy\t %s\n", _attr_schedpolicy(sched_pol));
-  log_color(
-      MAG,
+  log_debug("Scheduling policy\t %s\n", _attr_schedpolicy(sched_pol));
+  log_debug(
       "Schedule prio min-max\t %d-%d\n",
       sched_get_priority_min(sched_pol),
       sched_get_priority_max(sched_pol));
   err = pthread_attr_getschedparam(attr, &sp);
   log_e(err, "pthread_attr_getschedparam");
-  log_color(MAG, "Scheduling priority\t %d\n", sp.sched_priority);
+  log_debug("Scheduling priority\t %d\n", sp.sched_priority);
   err = pthread_attr_getguardsize(attr, &v);
   log_e(err, "pthread_attr_getguardsize");
-  log_color(MAG, "Guard size\t\t %zu\n", v);
+  log_debug("Guard size\t\t %zu\n", v);
   err = pthread_attr_getstack(attr, &stkaddr, &v);
   log_e(err, "pthread_attr_getstack");
-  log_color(MAG, "Stack address\t\t %p\n", stkaddr);
-  log_color(MAG, "Stack size\t\t 0x%zx bytes\n", v);
+  log_debug("Stack address\t\t %p\n", stkaddr);
+  log_debug("Stack size\t\t 0x%zx bytes\n", v);
 }
 
 char const *_attr_detachstate(int code)
