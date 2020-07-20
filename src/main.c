@@ -119,7 +119,7 @@ void *t1(void *ta)
     item.intval = data_counter;
     strcpy(item.strval, (data_counter % 2 == 0) ? "even" : "odd");
     dstk_push(&s, item);
-    log_debug(MSG_DSTACK_PUSH, parms->name, s.size);
+    log_debug(MSG_DSTACK_PUSH, parms->name, s.size, item.intval, item.strval);
     pthread_mutex_unlock(&dsatck_mutex);
     task_wait(parms->freq, tic1, tmx1);
   }

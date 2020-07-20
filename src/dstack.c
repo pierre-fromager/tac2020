@@ -30,7 +30,8 @@ void dstk_resize(DStack *dstack)
     memcpy(resized_content, dstack->content, sizeof(Item) * dstack->top + 1);
     free(dstack->content);
     dstack->content = resized_content;
-    dstack->size = dstack->size * DSTACK_INIT_SIZE;
+    //dstack->size = dstack->size * DSTACK_INIT_SIZE;
+    dstack->size *= DSTACK_INIT_SIZE;
 }
 
 int dstk_isempty(DStack *dstack)

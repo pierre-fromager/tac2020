@@ -27,15 +27,15 @@ Main illustrates usage with a producer/consumer pattern sharing dynamic storage.
 
 ## :hamster: Features
 
-a task :
+a task has :
 
-* is threaded. 
-* has name. 
-* has a sched policy. 
-* has a sched priority. 
-* has its own stack with a given size. 
-* has cpu core assigned. 
-* can be regulated in term of time consuming by frequency without burning cpu time. 
+* thread. 
+* name. 
+* sched policy. 
+* sched priority. 
+* its own stack with a given size. 
+* cpu core assigned. 
+* time regulation. 
 
 ## :coffee: Todos
 

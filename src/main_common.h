@@ -13,7 +13,7 @@ extern "C"
 
 #define MSG_EXIT_MAIN "Exit main\n"
 #define MSG_FREE_ARGS "\nFreeing args mallocs\n"
-#define MSG_DSTACK_PUSH "%s dstack size : %d\n"
+#define MSG_DSTACK_PUSH "%s dstack size : %d - intval : %u, strval : %s\n"
 #define MSG_DSTACK_POP "dstack pop - intval : %u, strval : %s\n"
 #define MSG_PRE "pre"
 #define MSG_POST "post"
@@ -29,15 +29,17 @@ extern "C"
 #define HEADER_FMT "Start %s core %d freq %05d ms ssize %d prio %u\n"
 #define HEADER_DSTACK_FMT "%s dstack size %s pop : %d\n"
 
+#define NUMBER_OF_ITEMS 6
+
 #define T1_SSIZE 0x4096
 #define T1_NAME "producer"
-#define T1_PR 10
-#define T1_FQ 100
+#define T1_PR 1
+#define T1_FQ 200
 
 #define T2_SSIZE 0x4096
 #define T2_NAME "consumer"
 #define T2_PR 40
-#define T2_FQ (T1_FQ * 10)
+#define T2_FQ (T1_FQ * NUMBER_OF_ITEMS)
 
 #define LOGGER_LOG_LEVEL LOG_DEBUG
 
