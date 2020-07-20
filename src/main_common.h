@@ -11,6 +11,18 @@ extern "C"
 #ifndef MAIN_COMMON_H
 #define MAIN_COMMON_H
 
+#define MSG_EXIT_MAIN "Exit main\n"
+#define MSG_FREE_ARGS "\nFreeing args mallocs\n"
+#define MSG_DSTACK_PUSH "%s dstack size : %d\n"
+#define MSG_DSTACK_POP "dstack pop - intval : %u, strval : %s\n"
+#define MSG_PRE "pre"
+#define MSG_POST "post"
+
+#define EMSG_TH1_FAIL "thread th1 not created"
+#define EMSG_TH2_FAIL "thread th2 not created"
+#define EMSG_THHB_FAIL "thread heartbeat not created"
+#define EMSG_JOIN_THHB_FAIL "fail to join thread heartbeat"
+
 #define LOCALE_FR_UTF8 "fr_FR.utf8"
 #define TZ_PARIS "Europe/Paris"
 #define COMMON_FMT "%05u,%s,%05u,%16lu,%u,%s,%u\n"

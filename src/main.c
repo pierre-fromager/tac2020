@@ -38,7 +38,7 @@ int main(void)
   signal(SIGINT, sigint_handler);
   create_threads();
   dstk_destroy(&s);
-  log_debug("Exit main\n");
+  log_debug(MSG_EXIT_MAIN);
   return 0;
 }
 
@@ -53,7 +53,6 @@ void create_threads()
   void *stack1, *stack2;
 
   struct targs *t1_args = (struct targs *)malloc(sizeof(struct targs));
-
   t1_args->name = T1_NAME;
   t1_args->ssize = T1_SSIZE;
   t1_args->prio = T1_PR;
@@ -70,7 +69,6 @@ void create_threads()
   show_th_attr(&th1_attr);
 
   struct targs *t2_args = (struct targs *)malloc(sizeof(struct targs));
-
   t2_args->name = T2_NAME;
   t2_args->ssize = T2_SSIZE;
   t2_args->prio = T2_PR;
@@ -87,15 +85,14 @@ void create_threads()
   show_th_attr(&th2_attr);
 
   err = pthread_create(&th1, &th1_attr, t1, (void *)t1_args);
-  log_e(err, "thread th1 not created");
+  log_e(err, EMSG_TH1_FAIL);
   err = pthread_create(&th2, &th2_attr, t2, (void *)t2_args);
-  log_e(err, "thread th2 not created");
-
+  log_e(err, EMSG_TH2_FAIL);
   err = pthread_create(&thhb, NULL, hb, NULL);
-  log_e(err, "thread heartbeat not created");
-  pthread_join(thhb, NULL);
-
-  log_debug("\nFreeing args mallocs\n");
+  log_e(err, EMSG_THHB_FAIL);
+  err = pthread_join(thhb, NULL);
+  log_e(err, EMSG_JOIN_THHB_FAIL);
+  log_debug(MSG_FREE_ARGS);
   free(t1_args);
   free(t2_args);
 }
@@ -122,7 +119,7 @@ void *t1(void *ta)
     item.intval = data_counter;
     strcpy(item.strval, (data_counter % 2 == 0) ? "even" : "odd");
     dstk_push(&s, item);
-    log_debug("%s dstack size : %d\n", parms->name, s.size);
+    log_debug(MSG_DSTACK_PUSH, parms->name, s.size);
     pthread_mutex_unlock(&dsatck_mutex);
     task_wait(parms->freq, tic1, tmx1);
   }
@@ -143,13 +140,13 @@ void *t2(void *ta)
     pthread_mutex_lock(&dsatck_mutex);
     if (!dstk_isempty(&s))
     {
-      log_debug(HEADER_DSTACK_FMT, parms->name, "pre", s.size);
+      log_debug(HEADER_DSTACK_FMT, parms->name, MSG_PRE, s.size);
       while (!dstk_isempty(&s))
       {
         item = dstk_pop(&s);
-        log_debug("dstack pop - intval : %u, strval : %s\n", item.intval, item.strval);
+        log_debug(MSG_DSTACK_POP, item.intval, item.strval);
       }
-      log_debug(HEADER_DSTACK_FMT, parms->name, "post", s.size);
+      log_debug(HEADER_DSTACK_FMT, parms->name, MSG_POST, s.size);
     }
     pthread_mutex_unlock(&dsatck_mutex);
     task_wait(parms->freq, tic2, tmx2);

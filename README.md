@@ -1,35 +1,31 @@
-# Tac
+# :neckbeard: Tac
 
 Thread advanced control
 
-Threads facility to sync in time, set schedule policy and priority, set affinity to a core and  isolate stack.  
-Main program illustrates this usage with a simple producer/consumer pattern sharing a dynamic storage.  
+Sync threads in time, set schedule policy and priority, set core affinity, isolate stack.  
+Main illustrates usage with a producer/consumer pattern sharing dynamic storage.  
 
-## Me
+## :bust_in_silhouette: Me
 
-* Freelance interested in high and low level langages. 
-* Involved into IoT projects on embeded systems (atmel, xtensa, arm... ) and others MCUs for data acquisition and modules control where synchronized threads are not optionals. 
+* Freelance involved into IoT projects on embeded systems (atmel, xtensa, arm... ) and others MCUs for data acquisition and modules control where synced threads and low footprint are paramount. 
 * RTOS curious, FreeRTOS user.
 
-## Project
+## :horse: Project
 
-* I decided to build few C libs providing facilities as FreeRTOS did with  [xTaskCreate](https://www.freertos.org/a00125.html) or [xTaskCreatePinnedToCore](https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/system/freertos.html). 
+* Build few C libs providing facilities as FreeRTOS did with  [xTaskCreate](https://www.freertos.org/a00125.html) or [xTaskCreatePinnedToCore](https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/system/freertos.html). 
 
-## Hardware requirements
+## :cyclone: Requirements
+
+### Hardware
 
 * At least proc with 2 cores to pin threads to different cores. 
 
-## Os requirements
+### Os
 
 * Linux but you can try to port it to other platform. 
 * Pthread available as dev lib.  
 
-## Roadmap
-
-* check Features. 
-* check Todos. 
-
-## Features
+## :hamster: Features
 
 a task :
 
@@ -41,18 +37,18 @@ a task :
 * has cpu core assigned. 
 * can be regulated in term of time consuming by frequency without burning cpu time. 
 
-## Todos
+## :coffee: Todos
 
 * provide ellapse for real work payload task. 
 * trace potential memory leaks.
 * implement shared memory.
 * replace condition variables by signals.
 
-## Pitfall
+## :crying_cat_face: Pitfall
 
 * setting priority to RT (SCHED_RR) on a thread requires escalation privilege. 
 
-## Compilation
+## :rocket: Compilation
 
 ``` bash
 make
@@ -61,7 +57,7 @@ make
 ``` bash
 make clean
 ```
-## Crosscheck
+## :innocent: Crosscheck
 
 ### Cpu affinity 
 
@@ -94,7 +90,7 @@ SCHED_DEADLINE min/max priority	: 0/0
 ```
 Lowest is the value highest is the priority.
 
-## Debug
+## :bomb: Debug
 
 ### Check syntax
 
@@ -132,7 +128,7 @@ To trace memory
 make trace
 ```
 
-## Advices
+## :star2: Advices
 
 * always check the returned value of methods. 
 * printf is greedy on stack. 
